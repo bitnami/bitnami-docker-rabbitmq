@@ -5,6 +5,12 @@
 
 print_welcome_page
 
+if [[ "${RABBIT_ULIMIT}" ]]; then
+    ulimit -n "${RABBIT_ULIMIT}"
+else
+    ulimit -n 65536
+fi
+
 if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "/init.sh" ]]; then
   nami_initialize rabbitmq
   info "Starting rabbitmq... "
