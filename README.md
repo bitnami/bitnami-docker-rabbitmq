@@ -169,6 +169,7 @@ Available variables:
 
  - `RABBITMQ_USERNAME`: RabbitMQ application username. Default: **user**
  - `RABBITMQ_PASSWORD`: RabbitMQ application password. Default: **bitnami**
+ - `RABBITMQ_PASSWORD256`: RabbitMQ application password [SHA256 hashed](https://www.rabbitmq.com/passwords.html#computing-password-hash). Optional. Example: **dBfy7O8HZa1/E/KOHLB5Weu4e38bcDcUPxiFW1dLLqbx3Pag** (bitnami256)
  - `RABBITMQ_VHOST`: RabbitMQ application vhost. Default: **/**
  - `RABBITMQ_ERL_COOKIE`: Erlang cookie to determine whether different nodes are allowed to communicate with each other.
  - `RABBITMQ_NODE_TYPE`: Node Type. Valid values: *stats*, *queue-ram* or *queue-disc*. Default: **stats**
@@ -423,13 +424,19 @@ $ docker-compose up rabbitmq
 
 # Notable changes
 
+## 3.7.6-r10 / 3.7.6-ol-7-r5
+
+`RABBITMQ_PASSWORD_SHA256` parameter have been added. If set, it's using `RABBITMQ_PASSWORD`, to reset password
+for `RABBITMQ_USERNAME` via [RabbitMQ-Management API](https://cdn.rawgit.com/rabbitmq/rabbitmq-management/v3.7.6/priv/www/api/index.html) during start.
+
+
 ## 3.6.5-r2
 
 The following parameters have been renamed:
 
 |            From            |              To              |
 |----------------------------|------------------------------|
-| `RABBITMQ_ERLANG_COOKIE`    | `RABBITMQ_ERL_COOKIE`     |
+| `RABBITMQ_ERLANG_COOKIE`   | `RABBITMQ_ERL_COOKIE`        |
 
 ## 3.6.5-r2
 
