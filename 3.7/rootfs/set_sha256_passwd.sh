@@ -2,10 +2,6 @@
 
 set -e
 
-if [[ "$1" == "--sleep" ]]; then
-  sleep $2
-fi
-
 if [[ -r /opt/bitnami/base/helpers ]]; then
   . /opt/bitnami/base/helpers
 else
@@ -14,11 +10,22 @@ else
   error() { echo >&2 "ERROR: $@"; }
 fi
 
+info "Node type \"$RABBITMQ_NODE_TYPE\" detected"
+if [[ "$RABBITMQ_NODE_TYPE" == "stats" ]]; then
+  info 'Checking environment for RABBITMQ_PASSWORD_SHA256 variable'
+else
+  info 'nothing to do here..'
+fi
+
+if [[ "$1" == "--sleep" ]]; then
+  sleep $2
+fi
+
 # details on rabbitMQ password hashing
 ## https://www.rabbitmq.com/passwords.html#computing-password-hash
 #
 # Example RABBITMQ_PASSWORD_SHA256
-## plain  : bitnamisha256
+## plain  : bitnami256
 ## SHA256 : dBfy7O8HZa1/E/KOHLB5Weu4e38bcDcUPxiFW1dLLqbx3Pag
 
 if [[ "x${RABBITMQ_PASSWORD_SHA256:-x}x" == "xxx" ]]; then
