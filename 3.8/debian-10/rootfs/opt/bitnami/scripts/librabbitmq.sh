@@ -235,7 +235,7 @@ rabbitmq_create_enabled_plugins_file() {
         is_boolean_yes "$RABBITMQ_ENABLE_LDAP" && plugins="${plugins}, rabbitmq_auth_backend_ldap"
     fi
     cat > "${RABBITMQ_CONF_DIR}/enabled_plugins" <<EOF
-[$plugins].
+[${plugins}].
 EOF
 }
 

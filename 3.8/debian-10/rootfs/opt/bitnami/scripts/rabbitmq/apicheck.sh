@@ -13,6 +13,6 @@ set -o pipefail
 URL=$1
 EXPECTED=$2
 ACTUAL=$(curl --silent --show-error --fail "$URL")
-info "Actual response: $ACTUAL"
-info "Expected response: $EXPECTED"
+info "Actual response: ${ACTUAL}"
+info "Expected response: ${EXPECTED}"
 test "$EXPECTED" = "$ACTUAL"
