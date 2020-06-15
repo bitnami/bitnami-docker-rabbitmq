@@ -310,11 +310,9 @@ node_is_running() {
 rabbitmq_start_bg() {
     is_rabbitmq_running && return
     info "Starting RabbitMQ in background..."
-    if [[ "${BITNAMI_DEBUG:-false}" = true ]]; then
-        "${RABBITMQ_BIN_DIR}/rabbitmq-server" &
-    else
-        "${RABBITMQ_BIN_DIR}/rabbitmq-server" >/dev/null 2>&1 &
-    fi
+    local start_command=("$RABBITMQ_BIN_DIR/rabbitmq-server")
+    am_i_root && start_command=("gosu" "$RABBITMQ_DAEMON_USER" "${start_command[@]}")
+    debug_execute "${start_command[@]}" &
     export RABBITMQ_PID="$!"
 
     if ! retry_while "debug_execute ${RABBITMQ_BIN_DIR}/rabbitmqctl wait --pid $RABBITMQ_PID --timeout 5" 10 10; then
