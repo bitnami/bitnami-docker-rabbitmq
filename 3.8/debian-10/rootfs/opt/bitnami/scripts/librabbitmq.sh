@@ -94,7 +94,7 @@ rabbitmq_validate() {
         error_code=1
     }
 
-    if [[ -z "$RABBITMQ_LOAD_DEFINITIONS" ]] && [[ -z "$RABBITMQ_PASSWORD" ]]; then
+    if [[ -z "$RABBITMQ_LOAD_DEFINITIONS" && -z "$RABBITMQ_PASSWORD" ]]; then
         print_validation_error "You must indicate a password or a hashed password."
     fi
     
