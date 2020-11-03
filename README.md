@@ -190,7 +190,6 @@ Available variables:
 
 * `RABBITMQ_USERNAME`: RabbitMQ application username. Default: **user**
 * `RABBITMQ_PASSWORD`: RabbitMQ application password. Default: **bitnami**
-* `RABBITMQ_HASHED_PASSWORD`: RabbitMQ application hashed password.
 * `RABBITMQ_VHOST`: RabbitMQ application vhost. Default: **/**
 * `RABBITMQ_ERL_COOKIE`: Erlang cookie to determine whether different nodes are allowed to communicate with each other.
 * `RABBITMQ_NODE_TYPE`: Node Type. Valid values: *stats*, *queue-ram* or *queue-disc*. Default: **stats**
@@ -210,6 +209,7 @@ Available variables:
 * `RABBITMQ_LDAP_USER_DN_PATTERN`: DN used to bind to LDAP in the form `cn=$${username},dc=example,dc=org`. No defaults.
 * `RABBITMQ_PLUGINS`: Comma, semi-colon or space separated list of plugins to enable during the initialization. No defaults.
 * `RABBITMQ_COMMUNITY_PLUGINS`: Comma, semi-colon or space separated list of URLs where to download custom plugins during the initialization. No defaults.
+* `RABBITMQ_LOAD_DEFINITIONS`: Enable compability with loading external definitions. Currently means that password for `RABBITMQ_USERNAME` is not changed to `RABBITMQ_PASSWORD`. Default: **no**.
 
 ### Setting up a cluster
 
@@ -503,11 +503,6 @@ $ docker-compose up rabbitmq
 
 * Decrease the size of the container. Node.js is not needed anymore. RabbitMQ configuration logic has been moved to bash scripts in the `rootfs` folder.
 * Configuration is not persisted anymore.
-
-### 3.7.7-r35
-
-* The RabbitMQ container includes a new environment variable `RABBITMQ_HASHED_PASSWORD` that allows setting password via SHA256 hash (consult [official documentation](https://www.rabbitmq.com/passwords.html) for more information about password hashes).
-* Please note that password hashes must be generated following the [official algorithm](https://www.rabbitmq.com/passwords.html#computing-password-hash). You can use [this Python script](https://gist.githubusercontent.com/anapsix/4c3e8a8685ce5a3f0d7599c9902fd0d5/raw/1203a480fcec1982084b3528415c3cad26541b82/rmq_passwd_hash.py) to generate them.
 
 ### 3.7.7-r19
 
