@@ -94,6 +94,10 @@ rabbitmq_validate() {
         error_code=1
     }
 
+    if ! is_yes_no_value "$RABBITMQ_LOAD_DEFINITIONS"; then
+        print_validation_error "An invalid value was specified in the environment variable RABBITMQ_LOAD_DEFINITIONS. Valid values are: yes or no"
+    fi
+
     if ! is_boolean_yes "$RABBITMQ_LOAD_DEFINITIONS" && [[ -z "$RABBITMQ_PASSWORD" ]]; then
         print_validation_error "You must indicate a password or a hashed password."
     fi
