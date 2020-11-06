@@ -487,6 +487,14 @@ $ docker-compose up rabbitmq
 
 ## Notable changes
 
+### 3.8.9-debian-10-r34
+
+* The environment variable `RABBITMQ_HASHED_PASSWORD` has not been used for some time. It is now
+  removed from documentation anv validation.
+* New boolean environment variable `RABBITMQ_LOAD_DEFINITIONS` to get behavior compatible with using
+  the `load_definitions` configuration. Initially this means that the password of
+  `RABBITMQ_USERNAME` is not changed using `rabbitmqctl change_password`.
+
 ### 3.8.3-debian-10-r109
 
 * The default configuration file is created following the "sysctl" or "ini-like" format instead of using Erlang terms. Check [Official documentation](https://www.rabbitmq.com/configure.html#config-file-formats) for more information about supported formats.
@@ -503,6 +511,11 @@ $ docker-compose up rabbitmq
 
 * Decrease the size of the container. Node.js is not needed anymore. RabbitMQ configuration logic has been moved to bash scripts in the `rootfs` folder.
 * Configuration is not persisted anymore.
+
+### 3.7.7-r35
+
+* The RabbitMQ container includes a new environment variable `RABBITMQ_HASHED_PASSWORD` that allows setting password via SHA256 hash (consult [official documentation](https://www.rabbitmq.com/passwords.html) for more information about password hashes).
+* Please note that password hashes must be generated following the [official algorithm](https://www.rabbitmq.com/passwords.html#computing-password-hash). You can use [this Python script](https://gist.githubusercontent.com/anapsix/4c3e8a8685ce5a3f0d7599c9902fd0d5/raw/1203a480fcec1982084b3528415c3cad26541b82/rmq_passwd_hash.py) to generate them.
 
 ### 3.7.7-r19
 
