@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# shellcheck disable=SC1091
+
 # Library to use for scripts expected to be used as Kubernetes lifecycle hooks
 
 # Output is sent to output of process 1 and thus end up in the container log. The hook output in

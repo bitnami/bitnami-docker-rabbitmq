@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# shellcheck disable=SC1091
+
 set -o nounset
 
 . /opt/bitnami/scripts/libhook.sh
