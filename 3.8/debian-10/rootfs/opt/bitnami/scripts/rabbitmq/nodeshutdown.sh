@@ -9,11 +9,11 @@ set -o nounset
 
 while getopts t:d:h flag
 do
-	case "${flag}" in
-	    t)
+    case "${flag}" in
+        t)
             TERMINATION_GRACE_PERIOD_SECONDS=${OPTARG}
             ;;
-	    d)
+        d)
             export BITNAMI_DEBUG=${OPTARG}
             ;;
         h)
@@ -28,7 +28,7 @@ do
             echo error "Option -$OPTARG requires an argument."
             exit 1
             ;;
-	esac
+    esac
 done
 
 if [[ "${TERMINATION_GRACE_PERIOD_SECONDS:-}" =~ ^[0-9]+$ ]]; then
