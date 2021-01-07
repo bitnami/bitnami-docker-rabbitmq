@@ -4,6 +4,7 @@
 
 set -o nounset
 
+. /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libhook.sh
 
 while : ; do

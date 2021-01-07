@@ -4,6 +4,7 @@
 
 set -o nounset
 
+. /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libhook.sh
 
 while getopts t:d:h flag
@@ -30,7 +31,7 @@ do
 	esac
 done
 
-if [[ "${TERMINATION_GRACE_PERIOD_SECONDS:-x}" =~ ^[0-9]+$ ]]; then
+if [[ "${TERMINATION_GRACE_PERIOD_SECONDS:-}" =~ ^[0-9]+$ ]]; then
     RABBITMQ_SYNC_TIMEOUT=$((TERMINATION_GRACE_PERIOD_SECONDS - 10))
 else
     RABBITMQ_SYNC_TIMEOUT=0
