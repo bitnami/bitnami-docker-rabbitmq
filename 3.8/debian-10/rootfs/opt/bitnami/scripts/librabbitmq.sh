@@ -410,7 +410,7 @@ rabbitmq_erlang_ssl_dir() {
 #########################
 rabbitmq_create_combined_ssl_file() {
     local -r combined_ssl_file="${RABBITMQ_CONF_DIR}/rabbitmq_combined_keys.pem"
-    printf "%s\n%s" <(cat "$RABBITMQ_SSL_CERTFILE") <(cat "$RABBITMQ_SSL_KEYFILE") > "$combined_ssl_file"
+    cat "$RABBITMQ_SSL_CERTFILE" "$RABBITMQ_SSL_KEYFILE" > "$combined_ssl_file"
 }
 
 ########################
