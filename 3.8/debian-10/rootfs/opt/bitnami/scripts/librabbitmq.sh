@@ -409,7 +409,7 @@ rabbitmq_erlang_ssl_dir() {
 #   None
 #########################
 rabbitmq_create_combined_ssl_file() {
-    local -r combined_ssl_file="/opt/bitnami/rabbitmq/etc/rabbitmq/rabbitmq_combined_keys.pem"
+    local -r combined_ssl_file="${RABBITMQ_CONF_DIR}/rabbitmq_combined_keys.pem"
     printf "%s\n%s" <(cat "$RABBITMQ_SSL_CERTFILE") <(cat "$RABBITMQ_SSL_KEYFILE") > "$combined_ssl_file"
 }
 
@@ -430,7 +430,7 @@ HOME=$RABBITMQ_HOME_DIR
 NODE_PORT=$RABBITMQ_NODE_PORT_NUMBER
 NODENAME=$RABBITMQ_NODE_NAME
 EOF
-        local combined_ssl_file="/opt/bitnami/rabbitmq/etc/rabbitmq/rabbitmq_combined_keys.pem"
+        local combined_ssl_file="${RABBITMQ_CONF_DIR}/rabbitmq_combined_keys.pem"
         if [[ -f "$combined_ssl_file" ]]; then
             cat <<EOF
 # SSL configuration
