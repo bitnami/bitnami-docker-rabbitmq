@@ -77,6 +77,7 @@ rabbitmq_validate() {
     check_conflicting_ports "RABBITMQ_MANAGEMENT_PORT_NUMBER" "RABBITMQ_NODE_PORT_NUMBER" "RABBITMQ_MANAGEMENT_SSL_PORT_NUMBER" "RABBITMQ_NODE_SSL_PORT_NUMBER"
     check_multi_value "RABBITMQ_SSL_VERIFY" "verify_none verify_peer"
     check_multi_value "RABBITMQ_MANAGEMENT_SSL_VERIFY" "verify_none verify_peer"
+    check_multi_value "RABBITMQ_USE_LONGNAME" "true false"
     check_fqdn "RABBITMQ_NODE_NAME"
 
     if is_boolean_yes "$RABBITMQ_LOAD_DEFINITIONS"; then
