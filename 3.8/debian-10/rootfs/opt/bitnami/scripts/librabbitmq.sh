@@ -64,7 +64,7 @@ rabbitmq_validate() {
 
     check_fqdn() {
         if [[ "${!1}" == *.* ]]; then
-            if [[ -z "${RABBITMQ_USE_LONGNAME:-}" ]] ; then
+            if [[ "${RABBITMQ_USE_LONGNAME}" = true ]] ; then
                 print_validation_error "The node name appears to be a fully qualified hostname and RABBITMQ_USE_LONGNAME is not set."
             fi
         fi
