@@ -18,9 +18,19 @@ set -o pipefail
 print_welcome_page
 
 if [[ "$*" = "/opt/bitnami/scripts/rabbitmq/run.sh" ]]; then
+    # Be sure the setup flag is removed (if someone make RABBITMQ_LIB_DIR persistent)
+    rm -f "${RABBITMQ_LIB_DIR}/.setup-completed" 2>/dev/null
+
     info "** Starting RabbitMQ setup **"
     /opt/bitnami/scripts/rabbitmq/setup.sh
     info "** RabbitMQ setup finished! **"
+
+    # Create a setup completed flag.
+    # Since setup.sh can fully boot the rabbit node, this one can join the cluster,
+    # starts to work and be shutdown right after causing troubles
+    # To avoid this we would like the K8S probes to detect the node up&running only
+    # after the node booted the 2nd time (not booted before the setup as ran)
+    touch "${RABBITMQ_LIB_DIR}/.setup-completed"
 fi
 
 echo ""
