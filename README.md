@@ -51,7 +51,7 @@ Non-root container images add an extra layer of security and are generally recom
 Learn more about the Bitnami tagging policy and the difference between rolling tags and immutable tags [in our documentation page](https://docs.bitnami.com/tutorials/understand-rolling-tags-containers/).
 
 
-* [`3.8`, `3.8-debian-10`, `3.8.9`, `3.8.9-debian-10-r88`, `latest` (3.8/debian-10/Dockerfile)](https://github.com/bitnami/bitnami-docker-rabbitmq/blob/3.8.9-debian-10-r88/3.8/debian-10/Dockerfile)
+* [`3.8`, `3.8-debian-10`, `3.8.11`, `3.8.11-debian-10-r6`, `latest` (3.8/debian-10/Dockerfile)](https://github.com/bitnami/bitnami-docker-rabbitmq/blob/3.8.11-debian-10-r6/3.8/debian-10/Dockerfile)
 
 Subscribe to project updates by watching the [bitnami/rabbitmq GitHub repo](https://github.com/bitnami/bitnami-docker-rabbitmq).
 
@@ -197,7 +197,8 @@ Available variables:
 * `RABBITMQ_LOAD_DEFINITIONS`: Whether to load external RabbitMQ definitions. This is incompatible with setting the RabbitMQ password securely. Default: **no**.
 * `RABBITMQ_ERL_COOKIE`: Erlang cookie to determine whether different nodes are allowed to communicate with each other.
 * `RABBITMQ_NODE_TYPE`: Node Type. Valid values: *stats*, *queue-ram* or *queue-disc*. Default: **stats**
-* `RABBITMQ_NODE_NAME`: Node name and host. E.g.: *node@hostname* or *node* (localhost won't work in cluster topology). Default **rabbit@localhost**. If using this variable, ensure that you specify a valid host name as the container wil fail to start otherwise.
+* `RABBITMQ_NODE_NAME`: Node name and host. E.g.: *node@hostname* or *node* (localhost won't work in cluster topology). Default **rabbit@localhost**. If using this variable, ensure that you specify a valid host name as the container wil fail to start otherwise. If using a fully qualified domain name, `RABBITMQ_USE_LONGNAME` needs to be set to `true` as well.
+* `RABBITMQ_USE_LONGNAME`: When set to *true* this will cause RabbitMQ to use fully qualified names to identify nodes. Default: **false**
 * `RABBITMQ_FORCE_BOOT`: Force a node to start even if it was not the last to shut down. Default: **no**
 * `RABBITMQ_CLUSTER_NODE_NAME`: Node name to cluster with. E.g.: **clusternode@hostname**
 * `RABBITMQ_CLUSTER_PARTITION_HANDLING`: Cluster partition recovery mechanism. Default: **ignore**
