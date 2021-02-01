@@ -61,6 +61,26 @@ rabbitmq_validate() {
             print_validation_error "An invalid port was specified in the environment variable ${port_var}: ${err}."
         fi
     }
+    check_file_exists_or_path_writable() {
+        local path_to_check="${!1}"
+        local full_path_to_check=$(realpath "${path_to_check}")
+        local path_directory_to_check="${full_path_to_check%/*}"
+        # check if given path is empty
+        if [ -z "${path_to_check}" ]; then
+            # not okay if the given path is empty
+            print_validation_error "The variable ${1} must be set to either an existant file or a non-existant file in a writable directory."
+        fi
+        # check if file at given path exists
+        if [ ! -f "${path_to_check}" ]; then
+            # if the file does not exist, check if the directory is writable
+            if [ ! -w "${path_directory_to_check}" ]; then
+              # not okay if not writable
+              print_validation_error "The variable ${1} must be set to either an existant file or a non-existant file in a writable directory."
+            fi
+            # ok if writable
+        fi
+        # ok if the file exists
+    }
 
     check_yes_no_value "RABBITMQ_LOAD_DEFINITIONS"
     check_yes_no_value "RABBITMQ_SECURE_PASSWORD"
@@ -69,6 +89,7 @@ rabbitmq_validate() {
     check_conflicting_ports "RABBITMQ_MANAGEMENT_PORT_NUMBER" "RABBITMQ_NODE_PORT_NUMBER" "RABBITMQ_MANAGEMENT_SSL_PORT_NUMBER" "RABBITMQ_NODE_SSL_PORT_NUMBER"
     check_multi_value "RABBITMQ_SSL_VERIFY" "verify_none verify_peer"
     check_multi_value "RABBITMQ_MANAGEMENT_SSL_VERIFY" "verify_none verify_peer"
+    check_file_exists_or_path_writable "RABBITMQ_COMBINED_CERT_PATH"
 
     if is_boolean_yes "$RABBITMQ_LOAD_DEFINITIONS"; then
         is_boolean_yes "$RABBITMQ_SECURE_PASSWORD" && "The RABBITMQ_LOAD_DEFINITIONS and RABBITMQ_SECURE_PASSWORD environment variables cannot be enabled at once."
@@ -409,8 +430,9 @@ rabbitmq_erlang_ssl_dir() {
 #   None
 #########################
 rabbitmq_create_combined_ssl_file() {
-    local -r combined_ssl_file="${RABBITMQ_CONF_DIR}/rabbitmq_combined_keys.pem"
-    cat "$RABBITMQ_SSL_CERTFILE" "$RABBITMQ_SSL_KEYFILE" > "$combined_ssl_file"
+    if [ ! -f "$RABBITMQ_COMBINED_CERT_PATH" ]; then
+      cat "$RABBITMQ_SSL_CERTFILE" "$RABBITMQ_SSL_KEYFILE" > "$RABBITMQ_COMBINED_CERT_PATH"
+    fi
 }
 
 ########################
@@ -430,14 +452,13 @@ HOME=$RABBITMQ_HOME_DIR
 NODE_PORT=$RABBITMQ_NODE_PORT_NUMBER
 NODENAME=$RABBITMQ_NODE_NAME
 EOF
-        local combined_ssl_file="${RABBITMQ_CONF_DIR}/rabbitmq_combined_keys.pem"
-        if [[ -f "$combined_ssl_file" ]]; then
+        if [[ -f "$RABBITMQ_COMBINED_CERT_PATH" ]]; then
             cat <<EOF
 # SSL configuration
 ERL_SSL_PATH=$(rabbitmq_erlang_ssl_dir)
 SERVER_ADDITIONAL_ERL_ARGS="-pa \$ERL_SSL_PATH
   -proto_dist inet_tls \
-  -ssl_dist_opt server_certfile ${combined_ssl_file} \
+  -ssl_dist_opt server_certfile ${RABBITMQ_COMBINED_CERT_PATH} \
   -ssl_dist_opt server_secure_renegotiate true client_secure_renegotiate true"
 RABBITMQ_CTL_ERL_ARGS="\$SERVER_ADDITIONAL_ERL_ARGS"
 EOF
