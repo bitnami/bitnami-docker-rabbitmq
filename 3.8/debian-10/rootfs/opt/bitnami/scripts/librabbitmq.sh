@@ -445,7 +445,7 @@ rabbitmq_erlang_ssl_dir() {
 #   None
 #########################
 rabbitmq_create_combined_ssl_file() {
-    if [ ! -f "$RABBITMQ_COMBINED_CERT_PATH" ]; then
+    if [[ ! -f "$RABBITMQ_COMBINED_CERT_PATH" ]]; then
       cat "$RABBITMQ_SSL_CERTFILE" "$RABBITMQ_SSL_KEYFILE" > "$RABBITMQ_COMBINED_CERT_PATH"
     fi
 }
