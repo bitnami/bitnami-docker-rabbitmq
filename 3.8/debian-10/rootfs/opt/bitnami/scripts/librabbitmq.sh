@@ -735,7 +735,62 @@ rabbitmq_initialize() {
         am_i_root && chown -R "$RABBITMQ_DAEMON_USER:$RABBITMQ_DAEMON_GROUP" "$dir"
     done
 
-    if ! is_mounted_dir_empty "$RABBITMQ_DATA_DIR"; then
+    # The following code has the purpose of ensuring that the setup procedure
+    # completes at-least-once. This is necessary when secure password
+    # configuration is enabled, as otherwise it is possible that the password
+    # is not set while the cluster is still coming up.
+    #
+    # This is a bit tricky. Support for a "init complete" flag was only
+    # introduced later, and we want to avoid disruption of existing clusters
+    # at all cost.
+    #
+    # We call the version supporting the "init complete" flag "v2" and the
+    # previous ones "v1" in this text.
+    #
+    # We have to distinguish the following cases:
+    # - data empty: We can safely bootstrap, as this is a new cluster or at
+    #   least a new container with no previous data; we can do the full init
+    #   procedure. We mark the data directory as being "v2" and put it in
+    #   "init" state.
+    # - data non-empty and no mark: This is a start of a "v2" image on an
+    #   existing, "v1" persisted volume. We place a "complete" mark and hope
+    #   for the best.
+    # - data non-empty and "complete" mark: Go ahead and continue start from
+    #   persisted data.
+    # - data non-empty and "init" mark: Initialization failed on the first
+    #   attempt, retry.
+    #
+    # This can be broken down in two phases:
+    #
+    # 1. Marking / upgrade
+    #
+    #   - data empty: Place "init" mark
+    #   - data non-empty && no mark: Place "complete" mark
+    #     (upgrade path from v1)
+    #
+    # 2. Init / Startup
+    #
+    #   - "init" mark: Do the bootstrap procedure. Once completed, change the
+    #     mark to "complete".
+    #   - "complete" mark: Do the startup procedure.
+
+    init_flag_file="${RABBITMQ_DATA_DIR}/.bitnami-init-flag"
+    complete_flag_file="${RABBITMQ_DATA_DIR}/.bitnami-complete-flag"
+
+    if is_mounted_dir_empty "$RABBITMQ_DATA_DIR"; then
+        # fresh volume, mark as v2 and go ahead with initialization
+        info "Empty data directory, bootstrapping ..."
+        touch "$init_flag_file"
+    elif [[ ! -f "$init_flag_file" ]]; then
+        # pre-v2 volume; mark as v2 complete
+        info "Running on a non-empty volume without mark file, assuming previous bootstrap succeeded"
+        touch "$complete_flag_file"
+        touch "$init_flag_file"
+    elif [[ ! -f "$complete_flag_file" ]]; then
+        warn "Previous bootstrap incomplete, re-initializing rabbitmq"
+    fi
+
+    if ! is_mounted_dir_empty "$RABBITMQ_DATA_DIR" && [[ -f "$complete_flag_file" ]]; then
         info "Persisted data detected. Restoring..."
         if is_boolean_yes "$RABBITMQ_FORCE_BOOT" && ! is_dir_empty "${RABBITMQ_DATA_DIR}/${RABBITMQ_NODE_NAME}"; then
             # ref: https://www.rabbitmq.com/rabbitmqctl.8.html#force_boot
@@ -752,5 +807,7 @@ rabbitmq_initialize() {
         if [[ "$RABBITMQ_NODE_TYPE" != "stats" ]] && [[ -n "$RABBITMQ_CLUSTER_NODE_NAME" ]]; then
             rabbitmq_join_cluster "$RABBITMQ_CLUSTER_NODE_NAME" "$RABBITMQ_NODE_TYPE"
         fi
+
+        touch "$complete_flag_file"
     fi
 }
